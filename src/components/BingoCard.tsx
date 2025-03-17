@@ -11,6 +11,8 @@ const BingoCard: React.FC = () => {
   const [bingoTiles, setBingoTiles] = useState<number[]>([]);
   const [showBingoAlert, setShowBingoAlert] = useState(false);
   const [hasBingo, setHasBingo] = useState(false);
+  const [bingoCount, setBingoCount] = useState(0);
+  const [isFinalBingo, setIsFinalBingo] = useState(false);
 
   // Initialize or reset the board
   const initializeBoard = () => {
@@ -24,6 +26,8 @@ const BingoCard: React.FC = () => {
     
     setBingoTiles([]);
     setHasBingo(false);
+    setBingoCount(0);
+    setIsFinalBingo(false);
   };
 
   // Initial setup
@@ -39,13 +43,31 @@ const BingoCard: React.FC = () => {
     newStamps[index] = !newStamps[index];
     setStamps(newStamps);
     
-    // Check for bingo only if stamping (not unstamping)
-    if (newStamps[index] && !hasBingo && checkForBingo(newStamps)) {
+    // Check for new bingo patterns
+    if (newStamps[index]) {
       const patterns = getBingoPatterns(newStamps);
-      const bingoIndices = patterns.flat();
-      setBingoTiles([...new Set(bingoIndices)]);
-      setShowBingoAlert(true);
-      setHasBingo(true);
+      
+      // If we found patterns and either don't have a bingo yet OR have new patterns
+      if (patterns.length > 0) {
+        const newBingoIndices = [...new Set(patterns.flat())];
+        
+        // Check if we've found new bingo patterns
+        const newBingo = !hasBingo || 
+          newBingoIndices.some(idx => !bingoTiles.includes(idx));
+        
+        if (newBingo) {
+          const nextBingoCount = bingoCount + 1;
+          setBingoCount(nextBingoCount);
+          setBingoTiles([...new Set([...bingoTiles, ...newBingoIndices])]);
+          setShowBingoAlert(true);
+          setHasBingo(true);
+          
+          // Check if this is the third bingo (final)
+          if (nextBingoCount >= 3) {
+            setIsFinalBingo(true);
+          }
+        }
+      }
     }
   };
 
@@ -90,6 +112,8 @@ const BingoCard: React.FC = () => {
         <BingoAlert
           onContinue={handleContinuePlaying}
           onReset={handleReset}
+          isFinalBingo={isFinalBingo}
+          bingoCount={bingoCount}
         />
       )}
     </div>
