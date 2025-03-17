@@ -10,7 +10,7 @@ const Index: React.FC = () => {
           <span className="text-bingo-accent font-semibold text-sm">Let's play!</span>
         </div>
         <h1 className="text-3xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-bingo-primary via-bingo-accent to-bingo-secondary bg-clip-text text-transparent">
-          Bingo Palette Party
+          Meeting Bingo
         </h1>
         <p className="text-gray-600 max-w-lg mx-auto text-base md:text-lg font-semibold">
           Mark a square when you hear these phrases during your meeting. 
